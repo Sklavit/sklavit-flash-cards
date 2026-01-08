@@ -2,41 +2,266 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
 
-  <title>Hello PWA</title>
+  <title>Flashcards</title>
 
   <!-- iOS-specific -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Hello PWA" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Flashcards" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
   <!-- PWA -->
   <link rel="manifest" href="/manifest.webmanifest" />
-  <meta name="theme-color" content="#ffffff" />
+  <meta name="theme-color" content="#6366f1" />
 
   <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     html, body {
       height: 100%;
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
     }
+
     body {
-      display: grid;
-      place-items: center;
-      background: #ffffff;
-      color: #111111;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
-    h1 {
-      font-size: 2rem;
+
+    .header {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .progress {
+      font-size: 0.9rem;
+      margin-top: 8px;
+      opacity: 0.9;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      perspective: 1000px;
+    }
+
+    .card-wrapper {
+      width: 100%;
+      max-width: 400px;
+      height: 500px;
+      max-height: 60vh;
+      position: relative;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      background: white;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-face-front {
+      color: #1f2937;
+    }
+
+    .card-face-back {
+      color: #1f2937;
+      transform: rotateY(180deg);
+      background: #f3f4f6;
+    }
+
+    .card-content {
+      font-size: 1.5rem;
+      text-align: center;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    .controls {
+      padding: 30px 20px;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+      color: #667eea;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      min-width: 120px;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+
+    .tap-hint {
+      text-align: center;
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-top: -15px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Hello World 👋</h1>
+  <div class="header">
+    <h1>Flashcards</h1>
+    <div class="progress">
+      <span id="current">1</span> / <span id="total">10</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card-wrapper">
+      <div class="card" id="card">
+        <div class="card-face card-face-front">
+          <div class="card-content" id="question"></div>
+        </div>
+        <div class="card-face card-face-back">
+          <div class="card-content" id="answer"></div>
+        </div>
+      </div>
+    </div>
+    <div class="tap-hint">Tap card to flip</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-secondary" id="prevBtn">Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+    <button class="btn btn-secondary" id="shuffleBtn">Shuffle</button>
+  </div>
 
   <script>
+    const flashcards = [
+      { question: "What is the capital of France?", answer: "Paris" },
+      { question: "What is 2 + 2?", answer: "4" },
+      { question: "What is the largest planet in our solar system?", answer: "Jupiter" },
+      { question: "Who painted the Mona Lisa?", answer: "Leonardo da Vinci" },
+      { question: "What is the chemical symbol for gold?", answer: "Au" },
+      { question: "How many continents are there?", answer: "7" },
+      { question: "What is the speed of light?", answer: "299,792,458 m/s" },
+      { question: "What year did World War II end?", answer: "1945" },
+      { question: "What is the smallest prime number?", answer: "2" },
+      { question: "What is the boiling point of water?", answer: "100°C (212°F)" }
+    ];
+
+    let currentIndex = 0;
+    let cards = [...flashcards];
+
+    const card = document.getElementById('card');
+    const questionEl = document.getElementById('question');
+    const answerEl = document.getElementById('answer');
+    const currentEl = document.getElementById('current');
+    const totalEl = document.getElementById('total');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+
+    function shuffle(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function updateCard() {
+      const currentCard = cards[currentIndex];
+      questionEl.textContent = currentCard.question;
+      answerEl.textContent = currentCard.answer;
+      currentEl.textContent = currentIndex + 1;
+      totalEl.textContent = cards.length;
+
+      card.classList.remove('flipped');
+
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === cards.length - 1;
+    }
+
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCard();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < cards.length - 1) {
+        currentIndex++;
+        updateCard();
+      }
+    });
+
+    shuffleBtn.addEventListener('click', () => {
+      cards = shuffle(flashcards);
+      currentIndex = 0;
+      updateCard();
+    });
+
+    cards = shuffle(flashcards);
+    updateCard();
+
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("/sw.js");
