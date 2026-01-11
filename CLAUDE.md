@@ -12,7 +12,8 @@ The `/planning` directory contains structured documentation for development and 
 /planning
 ├── in-progress.md                   # Current sprint tasks and priorities
 ├── done/                            # Completed features (implementation docs)
-│   └── spaced_repetition.md         # ✅ Implemented (2026-01-11)
+│   ├── spaced_repetition.md         # ✅ Implemented (2026-01-11)
+│   └── automated_testing.md         # ✅ Implemented (2026-01-11)
 ├── requests/                        # User stories (what to build)
 ├── specs/                           # Implementation specifications
 ├── todo/                            # Technical tasks (how to build)
@@ -62,7 +63,16 @@ See `/planning/design_decisions/` for detailed architectural choices.
 ├── index.html              # Main app (HTML + inline CSS + JavaScript)
 ├── manifest.webmanifest    # PWA manifest
 ├── service-worker.js       # Service worker for offline support (sw.js)
+├── package.json            # npm scripts and dev dependencies
 ├── CLAUDE.md               # This documentation
+├── src/
+│   └── core.js             # Core functions (SM-2, storage, card management)
+├── tests/
+│   ├── sm2.test.js         # SM-2 algorithm tests
+│   ├── storage.test.js     # Storage and persistence tests
+│   ├── cards.test.js       # Card management tests
+│   └── helpers/
+│       └── mocks.js        # Test mocks (localStorage, Date)
 └── planning/               # Development planning and specs
 ```
 
@@ -70,11 +80,12 @@ See `/planning/design_decisions/` for detailed architectural choices.
 
 ✅ **Core Features**:
 - Flashcard display with flip animation
-- SM-2 spaced repetition algorithm (index.html:235-259)
+- SM-2 spaced repetition algorithm (src/core.js:31-67)
 - localStorage persistence (flashcards + progress)
 - 4-button quality rating: No idea, Mistakes, Correct, Easy
 - Random due card selection
 - 10 test cards included
+- Automated test suite (40 tests, 9 test suites, 100% passing)
 
 ❌ **Still Needed for Phase 1**:
 - Card creation UI
@@ -94,13 +105,18 @@ See `/planning/specs/cards.md` and `/planning/specs/spaced_repetition.md` for de
 
 ### Key Functions (Current Implementation)
 
-Located in `index.html:235-325`:
-- `calculateSM2(cardProgress, quality)` - SM-2 algorithm implementation
-- `getDueCards()` - Filter cards due for review
+**Core Logic** (located in `src/core.js`):
+- `calculateSM2(cardProgress, quality)` - SM-2 algorithm implementation (src/core.js:31-67)
+- `getDueCards(cards, progress)` - Filter cards due for review (src/core.js:75-79)
+- `initializeProgress(cards)` - Initialize default progress state (src/core.js:87-99)
+- `initializeStorage(initialCards)` - Set up localStorage on first load (src/core.js:107-126)
+- `saveProgress(progress)` - Persist progress to localStorage (src/core.js:132-135)
+
+**UI Functions** (located in `index.html`):
 - `showNextCard()` - Display next due card
 - `reviewCard(quality)` - Record review and update progress
 
-See `/planning/done/spaced_repetition.md` for detailed function documentation.
+See `/planning/done/spaced_repetition.md` and `/planning/done/automated_testing.md` for detailed documentation.
 
 ## Development Workflow
 
@@ -130,11 +146,62 @@ Document: /planning/done/cards.md (explain what was built)
 ### When Completing a Feature
 
 1. Complete the feature according to `/planning/requests/` and `/planning/todo/` specifications
-2. Test thoroughly with all use cases
-3. Create implementation documentation in `/planning/done/{feature}.md`
-4. Update `/planning/specs/{feature}.md` to reflect actual implementation
-5. Update `/planning/in-progress.md` to mark feature as complete
-6. Note any deviations from original spec and why
+2. Test thoroughly with all use cases (manual + automated)
+3. Run automated test suite: `npm test`
+4. Create implementation documentation in `/planning/done/{feature}.md`
+5. Update `/planning/specs/{feature}.md` to reflect actual implementation
+6. Update `/planning/in-progress.md` to mark feature as complete
+7. Note any deviations from original spec and why
+
+## Testing
+
+### Running Tests
+
+The project uses Node.js built-in test runner (Node 18+) for automated testing.
+
+**Run all tests:**
+```bash
+npm test
+```
+
+**Watch mode** (re-run on file changes):
+```bash
+npm run test:watch
+```
+
+**With coverage report** (requires c8):
+```bash
+npm install --save-dev c8  # First time only
+npm run test:coverage
+```
+
+### Test Structure
+
+- **tests/sm2.test.js** - SM-2 algorithm tests (20 tests)
+  - Quality ratings (0, 1, 3, 5)
+  - Interval progression
+  - Ease factor adjustments
+  - Edge cases
+
+- **tests/storage.test.js** - Storage and persistence (13 tests)
+  - Progress initialization
+  - localStorage operations
+  - Data loading/saving
+
+- **tests/cards.test.js** - Card management (8 tests)
+  - Due card filtering
+  - Date-based selection
+  - Edge cases
+
+### Writing New Tests
+
+When adding new features:
+1. Extract testable logic to `src/core.js`
+2. Create test file in `tests/{feature}.test.js`
+3. Use mocks from `tests/helpers/mocks.js` for browser APIs
+4. Ensure all tests pass before committing
+
+See `/planning/specs/automated_testing.md` for testing architecture details.
 
 ## Code Quality Notes
 
@@ -151,7 +218,6 @@ Document: /planning/done/cards.md (explain what was built)
 - Basic error handling for storage
 - Simple UI (no complex interactions)
 - Limited accessibility features (can add later)
-- No unit tests (can add in phase 2+)
 
 **Avoiding Common Pitfalls:**
 - Don't add features beyond requirements

@@ -23,6 +23,7 @@ Transitioning from Time Tracker PWA to a Flashcard learning application with spa
 - [x] **Spaced Repetition** - Implement efficient scheduling algorithm ✅ (SM-2)
 - [x] **Random Card Proposal** - Suggest cards due for review now ✅ (random selection)
 - [x] **Learning Progress** - Track and display progress per card ✅ (basic counter)
+- [x] **Automated Testing** - Test suite for core functionality ✅ (40 tests, 2026-01-11)
 - [ ] **Named Decks** - Support multiple card collections
 - [ ] **Card Creation with LLM** - Generate 1 or multiple cards from prompts
 - [ ] **Time Travel** - Navigate to specific date for manual review
@@ -76,6 +77,7 @@ See `/planning/future/` for post-MVP ideas:
 3. ✅ localStorage persistence
 4. ✅ Test deck included (10 cards)
 5. ✅ Basic spaced repetition (SM-2 algorithm)
+6. ✅ Automated test suite (40 tests, 9 suites, 100% passing)
 
 **Still needed for Phase 1**:
 - Card creation UI
