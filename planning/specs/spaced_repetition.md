@@ -1,7 +1,7 @@
 # Specification: Spaced Repetition (SM-2 Algorithm)
 
-**Status**: Not yet implemented  
-**Links**: User Story: `/planning/requests/spaced_repetition.md` | Tasks: `/planning/todo/spaced_repetition.md`
+**Status**: ✅ Implemented (2026-01-11)
+**Links**: User Story: `/planning/requests/spaced_repetition.md` | Tasks: `/planning/todo/spaced_repetition.md` | Done: `/planning/done/spaced_repetition.md`
 
 ## Overview
 
@@ -201,9 +201,11 @@ Show next due card or "done for today"
 
 ## Implementation Status
 
-- [ ] Algorithm functions implemented
-- [ ] SM-2 formula verified correct
-- [ ] Performance tested
-- [ ] Time travel working
-- [ ] Progress persisted correctly
-- [ ] Integration with cards complete
+- [x] Algorithm functions implemented (index.html:235-259)
+- [x] SM-2 formula verified correct (with 6-day second interval)
+- [x] Performance tested (10 cards, instant)
+- [ ] Time travel working (deferred to Phase 2)
+- [x] Progress persisted correctly (localStorage)
+- [x] Integration with cards complete
+
+**Actual Implementation**: See `index.html:191-325` and `/planning/done/spaced_repetition.md`

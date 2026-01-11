@@ -181,86 +181,141 @@
     <div class="tap-hint">Tap card to flip</div>
   </div>
 
-  <div class="controls">
-    <button class="btn btn-secondary" id="prevBtn">Previous</button>
-    <button class="btn" id="nextBtn">Next</button>
-    <button class="btn btn-secondary" id="shuffleBtn">Shuffle</button>
+  <div class="controls" id="ratingButtons" style="visibility: hidden;">
+    <button class="btn rating-btn" data-quality="0" style="background: #ef4444; color: white;">No idea</button>
+    <button class="btn rating-btn" data-quality="1" style="background: #f97316; color: white;">Mistakes</button>
+    <button class="btn rating-btn" data-quality="3" style="background: #86efac; color: black;">Correct</button>
+    <button class="btn rating-btn" data-quality="5" style="background: #16a34a; color: white;">Easy</button>
   </div>
 
   <script>
-    const flashcards = [
-      { question: "What is the capital of France?", answer: "Paris" },
-      { question: "What is 2 + 2?", answer: "4" },
-      { question: "What is the largest planet in our solar system?", answer: "Jupiter" },
-      { question: "Who painted the Mona Lisa?", answer: "Leonardo da Vinci" },
-      { question: "What is the chemical symbol for gold?", answer: "Au" },
-      { question: "How many continents are there?", answer: "7" },
-      { question: "What is the speed of light?", answer: "299,792,458 m/s" },
-      { question: "What year did World War II end?", answer: "1945" },
-      { question: "What is the smallest prime number?", answer: "2" },
-      { question: "What is the boiling point of water?", answer: "100°C (212°F)" }
+    // Initial flashcards - See /planning/specs/cards.md
+    const initialCards = [
+      { id: '1', question: "What is the capital of France?", answer: "Paris" },
+      { id: '2', question: "What is 2 + 2?", answer: "4" },
+      { id: '3', question: "What is the largest planet in our solar system?", answer: "Jupiter" },
+      { id: '4', question: "Who painted the Mona Lisa?", answer: "Leonardo da Vinci" },
+      { id: '5', question: "What is the chemical symbol for gold?", answer: "Au" },
+      { id: '6', question: "How many continents are there?", answer: "7" },
+      { id: '7', question: "What is the speed of light?", answer: "299,792,458 m/s" },
+      { id: '8', question: "What year did World War II end?", answer: "1945" },
+      { id: '9', question: "What is the smallest prime number?", answer: "2" },
+      { id: '10', question: "What is the boiling point of water?", answer: "100°C (212°F)" }
     ];
 
-    let currentIndex = 0;
-    let cards = [...flashcards];
+    // Initialize storage
+    if (!localStorage.getItem('flashcards')) {
+      localStorage.setItem('flashcards', JSON.stringify(initialCards));
+    }
+    if (!localStorage.getItem('progress')) {
+      const initialProgress = {};
+      initialCards.forEach(card => {
+        initialProgress[card.id] = {
+          interval: 0,
+          repetitions: 0,
+          easeFactor: 2.5,
+          nextReview: Date.now()
+        };
+      });
+      localStorage.setItem('progress', JSON.stringify(initialProgress));
+    }
 
-    const card = document.getElementById('card');
+    let cards = JSON.parse(localStorage.getItem('flashcards'));
+    let progress = JSON.parse(localStorage.getItem('progress'));
+    let currentCard = null;
+    let isFlipped = false;
+
+    const cardEl = document.getElementById('card');
     const questionEl = document.getElementById('question');
     const answerEl = document.getElementById('answer');
     const currentEl = document.getElementById('current');
     const totalEl = document.getElementById('total');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const shuffleBtn = document.getElementById('shuffleBtn');
+    const ratingButtons = document.getElementById('ratingButtons');
 
-    function shuffle(array) {
-      const shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    // SM-2 Algorithm - See /planning/specs/spaced_repetition.md
+    function calculateSM2(cardProgress, quality) {
+      let { interval, repetitions, easeFactor } = cardProgress;
+
+      if (quality >= 3) {
+        if (repetitions === 0) {
+          interval = 1;
+        } else if (repetitions === 1) {
+          interval = 6;
+        } else {
+          interval = Math.round(interval * easeFactor);
+        }
+        repetitions++;
+      } else {
+        repetitions = 0;
+        interval = 1;
       }
-      return shuffled;
+
+      easeFactor = easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+      if (easeFactor < 1.3) easeFactor = 1.3;
+
+      const nextReview = Date.now() + (interval * 24 * 60 * 60 * 1000);
+
+      return { interval, repetitions, easeFactor, nextReview };
     }
 
-    function updateCard() {
-      const currentCard = cards[currentIndex];
+    function getDueCards() {
+      const now = Date.now();
+      return cards.filter(card => progress[card.id].nextReview <= now);
+    }
+
+    function showNextCard() {
+      const dueCards = getDueCards();
+
+      if (dueCards.length === 0) {
+        questionEl.textContent = "All done! 🎉";
+        answerEl.textContent = "No cards due for review. Come back later!";
+        cardEl.classList.remove('flipped');
+        ratingButtons.style.visibility = 'hidden';
+        currentEl.textContent = '0';
+        totalEl.textContent = '0';
+        return;
+      }
+
+      currentCard = dueCards[Math.floor(Math.random() * dueCards.length)];
       questionEl.textContent = currentCard.question;
       answerEl.textContent = currentCard.answer;
-      currentEl.textContent = currentIndex + 1;
+      cardEl.classList.remove('flipped');
+      isFlipped = false;
+      ratingButtons.style.visibility = 'hidden';
+
+      currentEl.textContent = cards.length - dueCards.length + 1;
       totalEl.textContent = cards.length;
-
-      card.classList.remove('flipped');
-
-      prevBtn.disabled = currentIndex === 0;
-      nextBtn.disabled = currentIndex === cards.length - 1;
     }
 
-    card.addEventListener('click', () => {
-      card.classList.toggle('flipped');
-    });
+    function reviewCard(quality) {
+      if (!currentCard) return;
 
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateCard();
+      progress[currentCard.id] = calculateSM2(progress[currentCard.id], quality);
+      localStorage.setItem('progress', JSON.stringify(progress));
+
+      showNextCard();
+    }
+
+    cardEl.addEventListener('click', () => {
+      if (!currentCard) return;
+
+      cardEl.classList.toggle('flipped');
+      isFlipped = !isFlipped;
+
+      if (isFlipped) {
+        ratingButtons.style.visibility = 'visible';
       }
     });
 
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < cards.length - 1) {
-        currentIndex++;
-        updateCard();
-      }
+    document.querySelectorAll('.rating-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const quality = parseInt(btn.dataset.quality);
+        reviewCard(quality);
+      });
     });
 
-    shuffleBtn.addEventListener('click', () => {
-      cards = shuffle(flashcards);
-      currentIndex = 0;
-      updateCard();
-    });
-
-    cards = shuffle(flashcards);
-    updateCard();
+    showNextCard();
 
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

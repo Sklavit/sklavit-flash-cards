@@ -16,30 +16,30 @@ Transitioning from Time Tracker PWA to a Flashcard learning application with spa
 - [ ] Persist application state locally
 
 ### Features (Priority Order)
-- [ ] **Textual Flashcards** - Display Q&A style cards
-- [ ] **Test Set of Cards** - Provide sample deck for users to test
+- [x] **Textual Flashcards** - Display Q&A style cards ✅ (2026-01-11)
+- [x] **Test Set of Cards** - Provide sample deck for users to test ✅ (10 cards included)
 - [ ] **Card Editing** - Allow users to modify existing cards
-- [ ] **Local Storage** - Remember app state when closed
-- [ ] **Spaced Repetition** - Implement efficient scheduling algorithm
-- [ ] **Random Card Proposal** - Suggest cards due for review now
-- [ ] **Learning Progress** - Track and display progress per card
+- [x] **Local Storage** - Remember app state when closed ✅ (localStorage)
+- [x] **Spaced Repetition** - Implement efficient scheduling algorithm ✅ (SM-2)
+- [x] **Random Card Proposal** - Suggest cards due for review now ✅ (random selection)
+- [x] **Learning Progress** - Track and display progress per card ✅ (basic counter)
 - [ ] **Named Decks** - Support multiple card collections
 - [ ] **Card Creation with LLM** - Generate 1 or multiple cards from prompts
 - [ ] **Time Travel** - Navigate to specific date for manual review
 - [ ] **Manual Card Updates** - Select and update cards manually
 
 ### Data Persistence
-- [ ] localStorage-based card storage
-- [ ] localStorage-based progress tracking
-- [ ] localStorage-based deck management
-- [ ] Automatic state recovery on app load
+- [x] localStorage-based card storage ✅ (index.html:207-209)
+- [x] localStorage-based progress tracking ✅ (index.html:210-221)
+- [ ] localStorage-based deck management (future)
+- [x] Automatic state recovery on app load ✅ (loads from localStorage)
 
 ### User Interface
-- [ ] Clean, minimal card display
-- [ ] Simple navigation between cards
-- [ ] Progress indicators
-- [ ] Deck selector/switcher
-- [ ] Basic settings/configuration
+- [x] Clean, minimal card display ✅ (flip animation)
+- [x] Simple navigation between cards ✅ (automatic on rating)
+- [x] Progress indicators ✅ (X / Y counter)
+- [ ] Deck selector/switcher (future)
+- [ ] Basic settings/configuration (future)
 - [ ] Export/Import functionality (future)
 
 ## Feature Details
@@ -70,12 +70,17 @@ See `/planning/future/` for post-MVP ideas:
 
 ## Development Phases
 
-### Phase 1: MVP (Current)
-1. Basic card creation and display
-2. Simple review workflow
-3. localStorage persistence
-4. Test deck included
-5. Basic spaced repetition
+### Phase 1: MVP (Partially Complete)
+1. ✅ Basic card display (10 test cards)
+2. ✅ Simple review workflow (flip + rate)
+3. ✅ localStorage persistence
+4. ✅ Test deck included (10 cards)
+5. ✅ Basic spaced repetition (SM-2 algorithm)
+
+**Still needed for Phase 1**:
+- Card creation UI
+- Card editing UI
+- Basic settings panel
 
 ### Phase 2: Enhancement
 1. LLM card generation
