@@ -60,8 +60,6 @@ See `/planning/design_decisions/` for detailed architectural choices.
 ```
 /
 ├── index.html              # Main app (HTML + inline CSS + JavaScript)
-├── script.js               # (Legacy - time tracking code, not used)
-├── style.css               # (Legacy - time tracking styles, not used)
 ├── manifest.webmanifest    # PWA manifest
 ├── service-worker.js       # Service worker for offline support (sw.js)
 ├── CLAUDE.md               # This documentation
