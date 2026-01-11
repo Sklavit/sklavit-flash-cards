@@ -181,7 +181,7 @@
     <div class="tap-hint">Tap card to flip</div>
   </div>
 
-  <div class="controls" id="ratingButtons" style="display: none;">
+  <div class="controls" id="ratingButtons" style="visibility: hidden;">
     <button class="btn rating-btn" data-quality="0" style="background: #ef4444; color: white;">No idea</button>
     <button class="btn rating-btn" data-quality="1" style="background: #f97316; color: white;">Mistakes</button>
     <button class="btn rating-btn" data-quality="3" style="background: #86efac; color: black;">Correct</button>
@@ -270,7 +270,7 @@
         questionEl.textContent = "All done! 🎉";
         answerEl.textContent = "No cards due for review. Come back later!";
         cardEl.classList.remove('flipped');
-        ratingButtons.style.display = 'none';
+        ratingButtons.style.visibility = 'hidden';
         currentEl.textContent = '0';
         totalEl.textContent = '0';
         return;
@@ -281,7 +281,7 @@
       answerEl.textContent = currentCard.answer;
       cardEl.classList.remove('flipped');
       isFlipped = false;
-      ratingButtons.style.display = 'none';
+      ratingButtons.style.visibility = 'hidden';
 
       currentEl.textContent = cards.length - dueCards.length + 1;
       totalEl.textContent = cards.length;
@@ -303,7 +303,7 @@
       isFlipped = !isFlipped;
 
       if (isFlipped) {
-        ratingButtons.style.display = 'flex';
+        ratingButtons.style.visibility = 'visible';
       }
     });
 
