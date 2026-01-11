@@ -1,8 +1,16 @@
 # Flashcard Spaced Repetition PWA - Technical Documentation
 
+> **⚠️ IMPORTANT**: This file provides high-level guidance and references. Keep detailed implementation specifics, test details, user guides, and API documentation in `/planning/` directory. This file should remain concise and navigational.
+
 ## Project Overview
 
 This is a Progressive Web App (PWA) for learning with textual flashcards using an efficient spaced repetition algorithm (SM-2). The app allows users to create and manage decks of cards, track learning progress, and study with optimal scheduling. Fully offline-capable with optional LLM-powered card generation.
+
+## Quick Links
+
+- **User Guide**: [How to run the app on iOS, macOS, etc.](/planning/user-guide.md)
+- **Testing Guide**: [How to run tests and write new ones](/planning/testing-guide.md)
+- **Development Plans**: See `/planning/in-progress.md` for current work
 
 ## Planning Directory
 
@@ -11,6 +19,8 @@ The `/planning` directory contains structured documentation for development and 
 ```
 /planning
 ├── in-progress.md                   # Current sprint tasks and priorities
+├── user-guide.md                    # How to run the app (iOS, macOS, etc.)
+├── testing-guide.md                 # How to run tests and write new ones
 ├── done/                            # Completed features (implementation docs)
 │   ├── spaced_repetition.md         # ✅ Implemented (2026-01-11)
 │   └── automated_testing.md         # ✅ Implemented (2026-01-11)
@@ -153,55 +163,33 @@ Document: /planning/done/cards.md (explain what was built)
 6. Update `/planning/in-progress.md` to mark feature as complete
 7. Note any deviations from original spec and why
 
+## Running the Application
+
+**For Users**: See `/planning/user-guide.md` for instructions on:
+- Running in browser (any device)
+- Installing as PWA on iOS (iPhone/iPad)
+- Installing as PWA on macOS (Safari/Chrome)
+- Installing on Android, Windows, Linux
+- Troubleshooting and offline usage
+
+**For Developers**: Use a local web server:
+```bash
+python3 -m http.server 8000   # Python
+# OR
+npx serve                      # Node.js
+```
+
+Then open `http://localhost:8000` in your browser.
+
 ## Testing
 
-### Running Tests
+**Quick Start**: Run `npm test` to execute the test suite (40 tests, 9 suites).
 
-The project uses Node.js built-in test runner (Node 18+) for automated testing.
-
-**Run all tests:**
-```bash
-npm test
-```
-
-**Watch mode** (re-run on file changes):
-```bash
-npm run test:watch
-```
-
-**With coverage report** (requires c8):
-```bash
-npm install --save-dev c8  # First time only
-npm run test:coverage
-```
-
-### Test Structure
-
-- **tests/sm2.test.js** - SM-2 algorithm tests (20 tests)
-  - Quality ratings (0, 1, 3, 5)
-  - Interval progression
-  - Ease factor adjustments
-  - Edge cases
-
-- **tests/storage.test.js** - Storage and persistence (13 tests)
-  - Progress initialization
-  - localStorage operations
-  - Data loading/saving
-
-- **tests/cards.test.js** - Card management (8 tests)
-  - Due card filtering
-  - Date-based selection
-  - Edge cases
-
-### Writing New Tests
-
-When adding new features:
-1. Extract testable logic to `src/core.js`
-2. Create test file in `tests/{feature}.test.js`
-3. Use mocks from `tests/helpers/mocks.js` for browser APIs
-4. Ensure all tests pass before committing
-
-See `/planning/specs/automated_testing.md` for testing architecture details.
+**Full Details**: See `/planning/testing-guide.md` for:
+- Running tests (test, watch, coverage)
+- Test structure and organization
+- Writing new tests
+- Debugging and best practices
 
 ## Code Quality Notes
 
@@ -232,12 +220,38 @@ See `/planning/specs/automated_testing.md` for testing architecture details.
 - Complex nested logic is hard to follow
 - Performance is measurably slow
 
-## Contact & Maintenance
+## Documentation Maintenance
 
-This documentation should be updated when:
-- Architecture changes significantly
-- New features are added
-- Data model changes
-- Breaking changes are introduced
+### When to Update This File (CLAUDE.md)
+
+Update CLAUDE.md when:
+- High-level architecture changes significantly
+- Major new features are added
+- File structure changes
+- Development workflow changes
+
+### What NOT to Include in CLAUDE.md
+
+**Do NOT include in this file:**
+- Detailed test instructions or test code examples
+- Step-by-step user instructions
+- API documentation
+- Detailed implementation specifics
+- Long code samples
+- Detailed troubleshooting guides
+
+**Instead, put these in:**
+- `/planning/testing-guide.md` - Test details
+- `/planning/user-guide.md` - User instructions
+- `/planning/specs/*.md` - API and implementation details
+- `/planning/done/*.md` - Detailed feature documentation
+
+### Keeping CLAUDE.md Concise
+
+This file should be:
+- High-level and navigational
+- Reference `/planning/` docs for details
+- Quick to scan and understand
+- Updated only when structure changes
 
 For detailed specifications, user stories, implementation plans, and design decisions, always refer to the `/planning/` directory.
