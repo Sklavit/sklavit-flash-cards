@@ -98,26 +98,39 @@ The `/planning` directory contains structured documentation for development and 
 
 ```
 /
-├── index.html              # Main HTML structure
-├── script.js               # Core app logic and SM-2 algorithm
-├── style.css               # Styling and responsive layout
-├── manifest.json           # PWA manifest
-├── service-worker.js       # Service worker for offline support
+├── index.html              # Main app (HTML + inline CSS + JavaScript)
+├── script.js               # (Legacy - time tracking code, not used)
+├── style.css               # (Legacy - time tracking styles, not used)
+├── manifest.webmanifest    # PWA manifest
+├── service-worker.js       # Service worker for offline support (sw.js)
 ├── CLAUDE.md               # This documentation
 └── planning/               # Development planning and specs
     ├── in-progress.md      # Current sprint tasks
     ├── done/               # Completed feature documentation
+    │   └── spaced_repetition.md  # ✅ Implemented (2026-01-11)
     ├── requests/           # User stories (what to build)
+    ├── specs/              # Implementation specifications
     ├── todo/               # Technical tasks (how to build)
     ├── design_decisions/   # Architecture decisions
     └── future/             # Post-MVP ideas
 ```
 
+**Current Implementation**: Single-file app (index.html) with inline styles and scripts for simplicity.
+
 ## Implementation Details
 
 ### Data Model
 
-**Card Structure:**
+**Card Structure (Actual Implementation):**
+```javascript
+{
+  id: string,              // Unique identifier (e.g., '1', '2', '3')
+  question: string,        // Front of card
+  answer: string           // Back of card
+}
+```
+
+**Card Structure (Planned - Future):**
 ```javascript
 {
   id: string,              // Unique identifier
@@ -131,7 +144,20 @@ The `/planning` directory contains structured documentation for development and 
 }
 ```
 
-**Progress Tracking Structure:**
+**Progress Tracking Structure (Actual Implementation):**
+```javascript
+// localStorage.progress is an object mapping cardId → progress
+{
+  "1": {
+    interval: 0,           // Days until next review
+    repetitions: 0,        // Times reviewed successfully
+    easeFactor: 2.5,       // SM-2 factor (starts at 2.5, min 1.3)
+    nextReview: timestamp  // Unix timestamp (ms) of next due date
+  }
+}
+```
+
+**Progress Tracking Structure (Planned - Future):**
 ```javascript
 {
   cardId: string,
@@ -160,57 +186,86 @@ The `/planning` directory contains structured documentation for development and 
 }
 ```
 
-**Storage:**
+**Storage (Actual Implementation):**
+- `localStorage.flashcards` - Array of all cards (JSON)
+- `localStorage.progress` - Object mapping cardId → progress record (JSON)
+- Data persists across browser sessions
+- 10 initial test cards included
+
+**Storage (Planned - Future):**
 - `localStorage.cards` - Array of all cards (JSON)
 - `localStorage.progress` - Array of progress records (JSON)
 - `localStorage.decks` - Array of deck metadata (JSON)
 - `localStorage.settings` - User settings and preferences (JSON)
-- Each array persists across browser sessions
-- Can be exported/imported as JSON files
+- Export/import functionality
 
-### State Management (script.js)
+### State Management (index.html - inline JavaScript)
 
-**Global State Variables:**
-- `cards` - Array of all flashcards loaded from localStorage
-- `progress` - Object mapping cardId to progress records
+**Global State Variables (Actual Implementation):**
+- `cards` - Array of all flashcards loaded from localStorage.flashcards
+- `progress` - Object mapping cardId to progress records from localStorage.progress
+- `currentCard` - Currently displayed card (null when no cards due)
+- `isFlipped` - Boolean tracking card flip state
+
+**Planned Variables (Future):**
 - `decks` - Array of deck metadata
 - `currentDeckId` - Currently active deck
-- `currentCardIndex` - Index of card being reviewed (null when not reviewing)
+- `currentCardIndex` - Index of card being reviewed
 
-**Key Functions:**
+**Key Functions (Actual Implementation in index.html:235-325):**
 
-1. **`calculateSM2(cardProgress, quality)`** - SM-2 Algorithm Implementation
+1. **`calculateSM2(cardProgress, quality)`** - SM-2 Algorithm Implementation ✅
    - Input: Current progress object and quality rating (0-5)
    - Output: Updated progress with new interval and ease factor
-   - Implements full SuperMemo 2 algorithm
+   - Implements SM-2 algorithm with 6-day second interval
    - Used for every card review
+   - See: index.html:235-259
 
-2. **`getNextDueCard(deckId)`** - Card Selection
+2. **`getDueCards()`** - Get Due Cards ✅
    - Filters cards where nextReview <= now
+   - Returns array of due cards
+   - See: index.html:261-264
+
+3. **`showNextCard()`** - Card Selection and Display ✅
+   - Gets due cards
    - Randomly selects from due cards
-   - Returns null if no cards due
+   - Displays card or "All done!" message
+   - See: index.html:266-288
 
-3. **`reviewCard(cardId, quality)`** - Record Review
+4. **`reviewCard(quality)`** - Record Review ✅
    - Calls calculateSM2 with quality rating
-   - Updates localStorage with new progress
-   - Updates UI with next card
-   - Records timestamp of review
+   - Updates localStorage.progress with new schedule
+   - Shows next card
+   - See: index.html:290-297
 
-4. **`exportData()`** - Data Export
-   - Creates JSON file with cards + progress
-   - User downloads for backup/analysis
-   - Can be imported later to restore state
+**Planned Functions (Future):**
+- `exportData()` - Data Export
+- `importData(jsonFile)` - Data Import
+- `getNextDueCard(deckId)` - Deck-specific selection
 
-5. **`importData(jsonFile)`** - Data Import
-   - Parses JSON import file
-   - Merges or replaces existing data
-   - Updates UI after import
-
-See `/planning/requests/` for detailed function specifications.
+See `/planning/done/spaced_repetition.md` for implementation details.
 
 ### User Interface
 
-**Main Screen Layout:**
+**Current Screen Layout (Actual Implementation):**
+```
+┌─────────────────────────────────────┐
+│          Flashcards                  │
+│          X / Y                       │
+├─────────────────────────────────────┤
+│                                       │
+│      What is the capital of          │
+│      France?                          │
+│                                       │
+│          (Tap card to flip)          │
+│                                       │
+├─────────────────────────────────────┤
+│  [No idea] [Mistakes] [Correct] [Easy]│
+│     🔴       🟠         🟢        🟢   │
+└─────────────────────────────────────┘
+```
+
+**Planned Screen Layout (Future):**
 ```
 ┌─────────────────────────────────────┐
 │  Deck Selector    │ ⚙️ Settings      │
@@ -231,13 +286,18 @@ See `/planning/requests/` for detailed function specifications.
 └─────────────────────────────────────┘
 ```
 
-**Key UI Elements:**
-- **Deck Selector**: Switch between named card decks
-- **Card Display**: Large, centered card with question visible
-- **Flip Animation**: Tap/click to reveal answer
-- **Quality Buttons**: 6-point scale (0-5) for rating retention
-- **Progress Info**: Shows scheduling and review history
-- **Stats Bar**: Due, learning, and mastered card counts
+**Key UI Elements (Actual Implementation):**
+- **Card Display**: Large, centered card with flip animation ✅
+- **Flip Animation**: Tap/click to reveal answer ✅
+- **Quality Buttons**: 4-button scale (0,1,3,5) - No idea, Mistakes, Correct, Easy ✅
+- **Progress Counter**: "X / Y" shows reviewed/total ✅
+
+**Planned UI Elements (Future):**
+- Deck selector
+- Statistics bar
+- Settings panel
+- Review history
+- Next review date display
 
 **Design Principles:**
 - Minimalist: Remove distractions from learning
