@@ -134,7 +134,11 @@ describe('Feature - Specific Area', () => {
 
 ### Running a Single Test File
 ```bash
+# Run a specific test file
 node --test tests/sm2.test.js
+
+# Run all test files (note: use *.test.js, not **/*.test.js)
+node --test tests/*.test.js
 ```
 
 ### Running with Debugging

@@ -155,9 +155,9 @@ export function mockDate(timestamp) {
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test": "node --test tests/**/*.test.js",
-    "test:watch": "node --test --watch tests/**/*.test.js",
-    "test:coverage": "c8 node --test tests/**/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "test:watch": "node --test --watch tests/*.test.js",
+    "test:coverage": "c8 node --test tests/*.test.js"
   },
   "devDependencies": {
     "c8": "^8.0.1"

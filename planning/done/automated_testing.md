@@ -115,9 +115,9 @@ Added to `package.json`:
 
 ```json
 "scripts": {
-  "test": "node --test tests/**/*.test.js",
-  "test:watch": "node --test --watch tests/**/*.test.js",
-  "test:coverage": "c8 node --test tests/**/*.test.js"
+  "test": "node --test tests/*.test.js",
+  "test:watch": "node --test --watch tests/*.test.js",
+  "test:coverage": "c8 node --test tests/*.test.js"
 }
 ```
 
