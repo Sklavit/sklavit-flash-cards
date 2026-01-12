@@ -1,0 +1,22 @@
+{
+  "name": "flashcard-pwa",
+  "version": "1.0.0",
+  "description": "Progressive Web App for learning with textual flashcards using spaced repetition",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:watch": "node --test --watch tests/*.test.js",
+    "test:coverage": "c8 node --test tests/*.test.js"
+  },
+  "keywords": [
+    "flashcards",
+    "spaced-repetition",
+    "pwa",
+    "learning"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "c8": "^8.0.1"
+  }
+}

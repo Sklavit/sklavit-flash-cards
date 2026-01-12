@@ -1,8 +1,16 @@
 # Flashcard Spaced Repetition PWA - Technical Documentation
 
+> **⚠️ IMPORTANT**: This file provides high-level guidance and references. Keep detailed implementation specifics, test details, user guides, and API documentation in `/planning/` directory. This file should remain concise and navigational.
+
 ## Project Overview
 
 This is a Progressive Web App (PWA) for learning with textual flashcards using an efficient spaced repetition algorithm (SM-2). The app allows users to create and manage decks of cards, track learning progress, and study with optimal scheduling. Fully offline-capable with optional LLM-powered card generation.
+
+## Quick Links
+
+- **User Guide**: [How to run the app on iOS, macOS, etc.](/planning/user-guide.md)
+- **Testing Guide**: [How to run tests and write new ones](/planning/testing-guide.md)
+- **Development Plans**: See `/planning/in-progress.md` for current work
 
 ## Planning Directory
 
@@ -11,8 +19,11 @@ The `/planning` directory contains structured documentation for development and 
 ```
 /planning
 ├── in-progress.md                   # Current sprint tasks and priorities
+├── user-guide.md                    # How to run the app (iOS, macOS, etc.)
+├── testing-guide.md                 # How to run tests and write new ones
 ├── done/                            # Completed features (implementation docs)
-│   └── spaced_repetition.md         # ✅ Implemented (2026-01-11)
+│   ├── spaced_repetition.md         # ✅ Implemented (2026-01-11)
+│   └── automated_testing.md         # ✅ Implemented (2026-01-11)
 ├── requests/                        # User stories (what to build)
 ├── specs/                           # Implementation specifications
 ├── todo/                            # Technical tasks (how to build)
@@ -62,7 +73,16 @@ See `/planning/design_decisions/` for detailed architectural choices.
 ├── index.html              # Main app (HTML + inline CSS + JavaScript)
 ├── manifest.webmanifest    # PWA manifest
 ├── service-worker.js       # Service worker for offline support (sw.js)
+├── package.json            # npm scripts and dev dependencies
 ├── CLAUDE.md               # This documentation
+├── src/
+│   └── core.js             # Core functions (SM-2, storage, card management)
+├── tests/
+│   ├── sm2.test.js         # SM-2 algorithm tests
+│   ├── storage.test.js     # Storage and persistence tests
+│   ├── cards.test.js       # Card management tests
+│   └── helpers/
+│       └── mocks.js        # Test mocks (localStorage, Date)
 └── planning/               # Development planning and specs
 ```
 
@@ -70,11 +90,12 @@ See `/planning/design_decisions/` for detailed architectural choices.
 
 ✅ **Core Features**:
 - Flashcard display with flip animation
-- SM-2 spaced repetition algorithm (index.html:235-259)
+- SM-2 spaced repetition algorithm (src/core.js:31-67)
 - localStorage persistence (flashcards + progress)
 - 4-button quality rating: No idea, Mistakes, Correct, Easy
 - Random due card selection
 - 10 test cards included
+- Automated test suite (40 tests, 9 test suites, 100% passing)
 
 ❌ **Still Needed for Phase 1**:
 - Card creation UI
@@ -94,13 +115,18 @@ See `/planning/specs/cards.md` and `/planning/specs/spaced_repetition.md` for de
 
 ### Key Functions (Current Implementation)
 
-Located in `index.html:235-325`:
-- `calculateSM2(cardProgress, quality)` - SM-2 algorithm implementation
-- `getDueCards()` - Filter cards due for review
+**Core Logic** (located in `src/core.js`):
+- `calculateSM2(cardProgress, quality)` - SM-2 algorithm implementation (src/core.js:31-67)
+- `getDueCards(cards, progress)` - Filter cards due for review (src/core.js:75-79)
+- `initializeProgress(cards)` - Initialize default progress state (src/core.js:87-99)
+- `initializeStorage(initialCards)` - Set up localStorage on first load (src/core.js:107-126)
+- `saveProgress(progress)` - Persist progress to localStorage (src/core.js:132-135)
+
+**UI Functions** (located in `index.html`):
 - `showNextCard()` - Display next due card
 - `reviewCard(quality)` - Record review and update progress
 
-See `/planning/done/spaced_repetition.md` for detailed function documentation.
+See `/planning/done/spaced_repetition.md` and `/planning/done/automated_testing.md` for detailed documentation.
 
 ## Development Workflow
 
@@ -130,11 +156,40 @@ Document: /planning/done/cards.md (explain what was built)
 ### When Completing a Feature
 
 1. Complete the feature according to `/planning/requests/` and `/planning/todo/` specifications
-2. Test thoroughly with all use cases
-3. Create implementation documentation in `/planning/done/{feature}.md`
-4. Update `/planning/specs/{feature}.md` to reflect actual implementation
-5. Update `/planning/in-progress.md` to mark feature as complete
-6. Note any deviations from original spec and why
+2. Test thoroughly with all use cases (manual + automated)
+3. Run automated test suite: `npm test`
+4. Create implementation documentation in `/planning/done/{feature}.md`
+5. Update `/planning/specs/{feature}.md` to reflect actual implementation
+6. Update `/planning/in-progress.md` to mark feature as complete
+7. Note any deviations from original spec and why
+
+## Running the Application
+
+**For Users**: See `/planning/user-guide.md` for instructions on:
+- Running in browser (any device)
+- Installing as PWA on iOS (iPhone/iPad)
+- Installing as PWA on macOS (Safari/Chrome)
+- Installing on Android, Windows, Linux
+- Troubleshooting and offline usage
+
+**For Developers**: Use a local web server:
+```bash
+python3 -m http.server 8000   # Python
+# OR
+npx serve                      # Node.js
+```
+
+Then open `http://localhost:8000` in your browser.
+
+## Testing
+
+**Quick Start**: Run `npm test` to execute the test suite (40 tests, 9 suites).
+
+**Full Details**: See `/planning/testing-guide.md` for:
+- Running tests (test, watch, coverage)
+- Test structure and organization
+- Writing new tests
+- Debugging and best practices
 
 ## Code Quality Notes
 
@@ -151,7 +206,6 @@ Document: /planning/done/cards.md (explain what was built)
 - Basic error handling for storage
 - Simple UI (no complex interactions)
 - Limited accessibility features (can add later)
-- No unit tests (can add in phase 2+)
 
 **Avoiding Common Pitfalls:**
 - Don't add features beyond requirements
@@ -166,12 +220,38 @@ Document: /planning/done/cards.md (explain what was built)
 - Complex nested logic is hard to follow
 - Performance is measurably slow
 
-## Contact & Maintenance
+## Documentation Maintenance
 
-This documentation should be updated when:
-- Architecture changes significantly
-- New features are added
-- Data model changes
-- Breaking changes are introduced
+### When to Update This File (CLAUDE.md)
+
+Update CLAUDE.md when:
+- High-level architecture changes significantly
+- Major new features are added
+- File structure changes
+- Development workflow changes
+
+### What NOT to Include in CLAUDE.md
+
+**Do NOT include in this file:**
+- Detailed test instructions or test code examples
+- Step-by-step user instructions
+- API documentation
+- Detailed implementation specifics
+- Long code samples
+- Detailed troubleshooting guides
+
+**Instead, put these in:**
+- `/planning/testing-guide.md` - Test details
+- `/planning/user-guide.md` - User instructions
+- `/planning/specs/*.md` - API and implementation details
+- `/planning/done/*.md` - Detailed feature documentation
+
+### Keeping CLAUDE.md Concise
+
+This file should be:
+- High-level and navigational
+- Reference `/planning/` docs for details
+- Quick to scan and understand
+- Updated only when structure changes
 
 For detailed specifications, user stories, implementation plans, and design decisions, always refer to the `/planning/` directory.
