@@ -488,7 +488,7 @@
     ];
 
     // Initialize storage using core function
-    const { cards, progress } = initializeStorage(initialCards);
+    let { cards, progress } = initializeStorage(initialCards);
 
     let currentCard = null;
     let isFlipped = false;
@@ -742,6 +742,9 @@
 
       // Update study view
       totalEl.textContent = cards.length;
+
+      // Refresh study view to include new card in due cards
+      showNextCard();
     });
 
     // Delete card
