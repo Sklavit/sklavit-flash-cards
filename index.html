@@ -388,6 +388,15 @@
       justify-content: flex-end;
       margin-top: 20px;
     }
+
+    .btn-modal-cancel {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #d1d5db;
+    }
   </style>
 </head>
 <body>
@@ -430,7 +439,12 @@
   <div class="view" id="dashboardView">
     <div class="dashboard">
       <div class="dashboard-header">
-        <div class="dashboard-title">Card Management</div>
+        <div>
+          <div class="dashboard-title">Card Management</div>
+          <div style="color: white; opacity: 0.9; font-size: 0.9rem; margin-top: 5px;">
+            <span id="dashboardCardCount">0</span> cards total
+          </div>
+        </div>
         <button class="btn btn-success" id="addCardBtn">+ Add Card</button>
       </div>
       <div class="card-list" id="cardList"></div>
@@ -450,7 +464,7 @@
         <textarea class="form-textarea" id="newCardAnswer" placeholder="Enter the answer..."></textarea>
       </div>
       <div class="modal-actions">
-        <button class="btn btn-secondary" id="cancelAddCard">Cancel</button>
+        <button class="btn btn-modal-cancel" id="cancelAddCard">Cancel</button>
         <button class="btn btn-success" id="saveNewCard">Save Card</button>
       </div>
     </div>
@@ -594,6 +608,12 @@
     // Render card list
     function renderCardList() {
       cardList.innerHTML = '';
+
+      // Update card count
+      const dashboardCardCount = document.getElementById('dashboardCardCount');
+      if (dashboardCardCount) {
+        dashboardCardCount.textContent = cards.length;
+      }
 
       if (cards.length === 0) {
         cardList.innerHTML = '<div style="text-align: center; color: white; padding: 40px;">No cards yet. Click "+ Add Card" to create your first card!</div>';
