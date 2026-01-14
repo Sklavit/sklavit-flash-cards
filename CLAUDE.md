@@ -42,6 +42,20 @@ The `/planning` directory contains structured documentation for development and 
 4. Follow the technical tasks in `/planning/todo/{feature}.md` (detailed implementation steps)
 5. Read design decisions in `/planning/design_decisions/` to understand architecture
 
+### CRITICAL: Documentation Discipline
+
+**You MUST follow these rules for every code change:**
+
+- **Update planning docs IMMEDIATELY after EVERY code change**
+- Treat documentation updates as part of the code change, not a separate task
+- Document bug fixes, not just initial features
+- Keep line number references current
+- Commit code and docs together in same session
+
+This is MANDATORY. Outdated docs waste time and cause confusion. See `/planning/lessons_learned.md` for real examples of what happens when this is not followed.
+
+### Development Workflows
+
 **When Adding Features:**
 1. Read the user story in `/planning/requests/{feature}.md` - WHAT users want
 2. Check `/planning/specs/{feature}.md` - HOW the system should be structured
