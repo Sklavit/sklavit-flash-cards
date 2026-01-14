@@ -1,6 +1,7 @@
 # Specification: Deck Management
 
-**Status**: Not yet implemented  
+**Status**: ⚠️ Partially implemented (data model complete, UI pending)
+**Implementation**: Data model and storage layer complete (see `/planning/done/deck_data_model.md`)
 **Links**: User Story: `/planning/requests/decks.md` | Tasks: `/planning/todo/decks.md`
 
 ## Overview

@@ -95,26 +95,68 @@ export function initializeProgress(cards) {
  * Initialize localStorage with default cards if empty
  *
  * @param {Array} initialCards - Default cards to use if storage is empty
- * @returns {Object} { cards, progress }
+ * @returns {Object} { cards, progress, defaultDeck }
  */
 export function initializeStorage(initialCards) {
   let cards, progress;
 
+  // Initialize decks first
+  const defaultDeck = initializeDecks();
+
+  // Initialize or migrate cards
   if (!localStorage.getItem('flashcards')) {
-    localStorage.setItem('flashcards', JSON.stringify(initialCards));
-    cards = initialCards;
+    // New installation: Add deckId to initial cards
+    const cardsWithDeck = initialCards.map(card => ({
+      ...card,
+      deckId: defaultDeck.id
+    }));
+    localStorage.setItem('flashcards', JSON.stringify(cardsWithDeck));
+    cards = cardsWithDeck;
   } else {
+    // Existing installation: Migrate cards without deckId
     cards = JSON.parse(localStorage.getItem('flashcards'));
+    let needsMigration = false;
+
+    cards = cards.map(card => {
+      if (!card.deckId) {
+        needsMigration = true;
+        return { ...card, deckId: defaultDeck.id };
+      }
+      return card;
+    });
+
+    if (needsMigration) {
+      localStorage.setItem('flashcards', JSON.stringify(cards));
+    }
   }
 
+  // Initialize progress
   if (!localStorage.getItem('progress')) {
-    progress = initializeProgress(initialCards);
+    progress = initializeProgress(cards);
     localStorage.setItem('progress', JSON.stringify(progress));
   } else {
     progress = JSON.parse(localStorage.getItem('progress'));
+
+    // Ensure progress exists for all cards
+    let needsUpdate = false;
+    cards.forEach(card => {
+      if (!progress[card.id]) {
+        progress[card.id] = {
+          interval: 0,
+          repetitions: 0,
+          easeFactor: 2.5,
+          nextReview: Date.now()
+        };
+        needsUpdate = true;
+      }
+    });
+
+    if (needsUpdate) {
+      localStorage.setItem('progress', JSON.stringify(progress));
+    }
   }
 
-  return { cards, progress };
+  return { cards, progress, defaultDeck };
 }
 
 /**
@@ -124,4 +166,243 @@ export function initializeStorage(initialCards) {
  */
 export function saveProgress(progress) {
   localStorage.setItem('progress', JSON.stringify(progress));
+}
+
+/**
+ * Generate unique ID for decks and cards
+ *
+ * @returns {string} Unique identifier
+ */
+export function generateId() {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Create a new deck
+ *
+ * @param {string} name - Deck name (required, max 50 chars)
+ * @param {string} description - Optional description
+ * @param {string} color - Optional hex color (e.g., #FF0000)
+ * @returns {Object} New deck object
+ */
+export function createDeck(name, description = '', color = '#6366f1') {
+  if (!name || name.trim().length === 0) {
+    throw new Error('Deck name is required');
+  }
+  if (name.length > 50) {
+    throw new Error('Deck name must be 50 characters or less');
+  }
+
+  const now = Date.now();
+  const deck = {
+    id: generateId(),
+    name: name.trim(),
+    description: description.trim(),
+    createdAt: now,
+    updatedAt: now,
+    color: color,
+    isDefault: false,
+    isArchived: false
+  };
+
+  const decks = getAllDecks();
+  decks.push(deck);
+  localStorage.setItem('decks', JSON.stringify(decks));
+
+  return deck;
+}
+
+/**
+ * Get all decks
+ *
+ * @param {boolean} includeArchived - Include archived decks (default: false)
+ * @returns {Array} Array of deck objects
+ */
+export function getAllDecks(includeArchived = false) {
+  const decksJson = localStorage.getItem('decks');
+  if (!decksJson) {
+    return [];
+  }
+
+  const decks = JSON.parse(decksJson);
+  if (includeArchived) {
+    return decks;
+  }
+  return decks.filter(deck => !deck.isArchived);
+}
+
+/**
+ * Get a single deck by ID
+ *
+ * @param {string} deckId - Deck identifier
+ * @returns {Object|null} Deck object or null if not found
+ */
+export function getDeck(deckId) {
+  const decks = getAllDecks(true); // Include archived for direct lookups
+  return decks.find(deck => deck.id === deckId) || null;
+}
+
+/**
+ * Update an existing deck
+ *
+ * @param {string} deckId - Deck identifier
+ * @param {Object} updates - Fields to update (name, description, color)
+ * @returns {Object|null} Updated deck or null if not found
+ */
+export function updateDeck(deckId, updates) {
+  const decks = getAllDecks(true);
+  const deckIndex = decks.findIndex(deck => deck.id === deckId);
+
+  if (deckIndex === -1) {
+    return null;
+  }
+
+  const deck = decks[deckIndex];
+
+  // Validate name if provided
+  if (updates.name !== undefined) {
+    if (!updates.name || updates.name.trim().length === 0) {
+      throw new Error('Deck name is required');
+    }
+    if (updates.name.length > 50) {
+      throw new Error('Deck name must be 50 characters or less');
+    }
+    deck.name = updates.name.trim();
+  }
+
+  // Update other fields
+  if (updates.description !== undefined) {
+    deck.description = updates.description.trim();
+  }
+  if (updates.color !== undefined) {
+    deck.color = updates.color;
+  }
+  if (updates.isArchived !== undefined) {
+    deck.isArchived = updates.isArchived;
+  }
+
+  deck.updatedAt = Date.now();
+
+  decks[deckIndex] = deck;
+  localStorage.setItem('decks', JSON.stringify(decks));
+
+  return deck;
+}
+
+/**
+ * Delete a deck
+ *
+ * @param {string} deckId - Deck identifier
+ * @param {boolean} archive - If true, archive instead of delete (default: false)
+ * @returns {boolean} Success status
+ */
+export function deleteDeck(deckId, archive = false) {
+  if (archive) {
+    // Archive the deck
+    const result = updateDeck(deckId, { isArchived: true });
+    return result !== null;
+  } else {
+    // Permanently delete deck and its cards
+    const decks = getAllDecks(true);
+    const deckIndex = decks.findIndex(deck => deck.id === deckId);
+
+    if (deckIndex === -1) {
+      return false;
+    }
+
+    // Remove deck
+    decks.splice(deckIndex, 1);
+    localStorage.setItem('decks', JSON.stringify(decks));
+
+    // Remove cards belonging to this deck
+    const cards = JSON.parse(localStorage.getItem('flashcards') || '[]');
+    const updatedCards = cards.filter(card => card.deckId !== deckId);
+    localStorage.setItem('flashcards', JSON.stringify(updatedCards));
+
+    // Remove progress for cards in this deck
+    const progress = JSON.parse(localStorage.getItem('progress') || '{}');
+    cards.forEach(card => {
+      if (card.deckId === deckId) {
+        delete progress[card.id];
+      }
+    });
+    localStorage.setItem('progress', JSON.stringify(progress));
+
+    return true;
+  }
+}
+
+/**
+ * Get statistics for a deck
+ *
+ * @param {string} deckId - Deck identifier
+ * @returns {Object} Statistics object
+ */
+export function getDeckStatistics(deckId) {
+  const cards = JSON.parse(localStorage.getItem('flashcards') || '[]')
+    .filter(card => card.deckId === deckId);
+  const progress = JSON.parse(localStorage.getItem('progress') || '{}');
+
+  const now = Date.now();
+  let dueCount = 0;
+  let learningCount = 0; // repetitions > 0
+  let newCount = 0; // repetitions === 0
+  let totalInterval = 0;
+  let totalEase = 0;
+
+  cards.forEach(card => {
+    const cardProgress = progress[card.id];
+    if (!cardProgress) return;
+
+    if (cardProgress.nextReview <= now) {
+      dueCount++;
+    }
+
+    if (cardProgress.repetitions === 0) {
+      newCount++;
+    } else {
+      learningCount++;
+    }
+
+    totalInterval += cardProgress.interval;
+    totalEase += cardProgress.easeFactor;
+  });
+
+  return {
+    totalCards: cards.length,
+    dueCards: dueCount,
+    newCards: newCount,
+    learningCards: learningCount,
+    averageInterval: cards.length > 0 ? Math.round(totalInterval / cards.length) : 0,
+    averageEase: cards.length > 0 ? (totalEase / cards.length).toFixed(2) : '2.50'
+  };
+}
+
+/**
+ * Initialize decks with a default "Sample" deck
+ *
+ * @returns {Object} Default deck
+ */
+export function initializeDecks() {
+  const existingDecks = getAllDecks(true);
+
+  if (existingDecks.length === 0) {
+    // Create default "Sample" deck
+    const deck = {
+      id: generateId(),
+      name: 'Sample Deck',
+      description: 'Sample cards to get you started',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      color: '#6366f1',
+      isDefault: true,
+      isArchived: false
+    };
+
+    localStorage.setItem('decks', JSON.stringify([deck]));
+    return deck;
+  }
+
+  // Return the first deck (or default deck if available)
+  return existingDecks.find(d => d.isDefault) || existingDecks[0];
 }

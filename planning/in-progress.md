@@ -89,9 +89,13 @@ See `/planning/future/` for post-MVP ideas:
 **Optional for Phase 1**:
 - Basic settings panel (not critical for MVP)
 
-### Phase 2: Enhancement
-1. LLM card generation
-2. Multiple decks
+### Phase 2: Enhancement (In Progress) 🚧
+1. **Multiple decks** - In progress
+   - ✅ Deck data model and storage layer (2026-01-14)
+   - ⏳ Deck UI components (deck selector, modal)
+   - ⏳ Deck switching functionality
+   - ⏳ Deck statistics display
+2. LLM card generation
 3. Improved UI/UX
 4. Progress statistics
 
