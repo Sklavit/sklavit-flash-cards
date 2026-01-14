@@ -225,6 +225,28 @@ See `/planning/future/` for potential improvements:
 ## Commit Information
 
 **Branch**: `claude/card-management-dashboard-idZTg`
-**Commit**: adf29a2 "Add card management dashboard with full CRUD operations"
+**Initial Commit**: 0dc17d3 "Add card management dashboard with full CRUD operations"
 **Date**: 2026-01-12
 **Files Changed**: index.html (+512 lines, -14 lines)
+
+### Follow-up Bug Fixes and Improvements
+
+**Commit 211fa77**: "Improve dashboard UI with fixes and enhancements"
+- Fixed modal cancel button styling (was white/transparent on white background)
+- Added total card count display to dashboard header ("X cards total")
+- Card count updates dynamically when cards added/deleted
+
+**Commit 94d5ec3**: "Fix critical bugs in card management"
+- Fixed card deletion error (changed `const` to `let` for cards/progress variables)
+- Fixed newly added cards not appearing until page reload
+- Added `showNextCard()` call after adding card to refresh study view
+
+**Commit 64dc02a**: "Fix dashboard scrolling in flexbox layout"
+- Added `min-height: 0` and `overflow: hidden` to `.view.active`
+- Fixed flexbox overflow issue preventing dashboard scroll
+
+**Commit 3d021ce**: "Make dashboard header fixed during scroll"
+- Restructured dashboard layout with fixed header
+- Added `.dashboard-content` wrapper for scrollable area
+- Header stays at top while card list scrolls below
+- Better UX when browsing many cards

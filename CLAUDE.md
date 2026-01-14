@@ -23,7 +23,8 @@ The `/planning` directory contains structured documentation for development and 
 ├── testing-guide.md                 # How to run tests and write new ones
 ├── done/                            # Completed features (implementation docs)
 │   ├── spaced_repetition.md         # ✅ Implemented (2026-01-11)
-│   └── automated_testing.md         # ✅ Implemented (2026-01-11)
+│   ├── automated_testing.md         # ✅ Implemented (2026-01-11)
+│   └── card_management_dashboard.md # ✅ Implemented (2026-01-12)
 ├── requests/                        # User stories (what to build)
 ├── specs/                           # Implementation specifications
 ├── todo/                            # Technical tasks (how to build)
@@ -86,7 +87,7 @@ See `/planning/design_decisions/` for detailed architectural choices.
 └── planning/               # Development planning and specs
 ```
 
-### Implemented Features (MVP Phase 1 - Partial)
+### Implemented Features (MVP Phase 1 - Complete) ✅
 
 ✅ **Core Features**:
 - Flashcard display with flip animation
@@ -97,13 +98,21 @@ See `/planning/design_decisions/` for detailed architectural choices.
 - 10 test cards included
 - Automated test suite (40 tests, 9 test suites, 100% passing)
 
-❌ **Still Needed for Phase 1**:
-- Card creation UI
-- Card editing UI
-- Basic settings panel
+✅ **Card Management Dashboard** (2026-01-12):
+- Two-tab navigation (Study / Dashboard)
+- View all cards with complete statistics
+- Add new cards via modal form
+- Delete cards with confirmation
+- Reset card progress (force update state)
+- Fixed header with scrollable card list
+- Real-time statistics display (interval, repetitions, ease factor, next review)
+
+**Optional for Phase 1** (Future):
+- Basic settings panel (not critical for MVP)
+- Card editing (update question/answer)
 
 See `/planning/in-progress.md` for current priorities.
-See `/planning/done/spaced_repetition.md` for full implementation details.
+See `/planning/done/` for detailed implementation documentation.
 
 ### Data Model (Current Implementation)
 
