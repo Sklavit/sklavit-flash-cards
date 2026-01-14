@@ -157,6 +157,256 @@
       margin-top: -15px;
       margin-bottom: 10px;
     }
+
+    /* Navigation */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      padding: 0 20px;
+      margin-top: 10px;
+    }
+
+    .nav-tab {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      transition: all 0.2s;
+    }
+
+    .nav-tab.active {
+      background: white;
+      color: #667eea;
+    }
+
+    /* View management */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Dashboard styles */
+    .dashboard {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      flex-shrink: 0;
+    }
+
+    .dashboard-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .dashboard-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px 20px 20px;
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card-item {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      color: #1f2937;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .card-item-content {
+      margin-bottom: 15px;
+    }
+
+    .card-item-question {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .card-item-answer {
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+
+    .card-item-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 0.75rem;
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .card-item-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-small:active {
+      transform: scale(0.95);
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      color: #1f2937;
+    }
+
+    .modal-header {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .btn-modal-cancel {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #d1d5db;
+    }
   </style>
 </head>
 <body>
@@ -165,27 +415,71 @@
     <div class="progress">
       <span id="current">1</span> / <span id="total">10</span>
     </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-view="study">Study</button>
+      <button class="nav-tab" data-view="dashboard">Dashboard</button>
+    </div>
   </div>
 
-  <div class="container">
-    <div class="card-wrapper">
-      <div class="card" id="card">
-        <div class="card-face card-face-front">
-          <div class="card-content" id="question"></div>
-        </div>
-        <div class="card-face card-face-back">
-          <div class="card-content" id="answer"></div>
+  <!-- Study View -->
+  <div class="view active" id="studyView">
+    <div class="container">
+      <div class="card-wrapper">
+        <div class="card" id="card">
+          <div class="card-face card-face-front">
+            <div class="card-content" id="question"></div>
+          </div>
+          <div class="card-face card-face-back">
+            <div class="card-content" id="answer"></div>
+          </div>
         </div>
       </div>
+      <div class="tap-hint">Tap card to flip</div>
     </div>
-    <div class="tap-hint">Tap card to flip</div>
+
+    <div class="controls" id="ratingButtons" style="visibility: hidden;">
+      <button class="btn rating-btn" data-quality="0" style="background: #ef4444; color: white;">No idea</button>
+      <button class="btn rating-btn" data-quality="1" style="background: #f97316; color: white;">Mistakes</button>
+      <button class="btn rating-btn" data-quality="3" style="background: #86efac; color: black;">Correct</button>
+      <button class="btn rating-btn" data-quality="5" style="background: #16a34a; color: white;">Easy</button>
+    </div>
   </div>
 
-  <div class="controls" id="ratingButtons" style="visibility: hidden;">
-    <button class="btn rating-btn" data-quality="0" style="background: #ef4444; color: white;">No idea</button>
-    <button class="btn rating-btn" data-quality="1" style="background: #f97316; color: white;">Mistakes</button>
-    <button class="btn rating-btn" data-quality="3" style="background: #86efac; color: black;">Correct</button>
-    <button class="btn rating-btn" data-quality="5" style="background: #16a34a; color: white;">Easy</button>
+  <!-- Dashboard View -->
+  <div class="view" id="dashboardView">
+    <div class="dashboard">
+      <div class="dashboard-header">
+        <div>
+          <div class="dashboard-title">Card Management</div>
+          <div style="color: white; opacity: 0.9; font-size: 0.9rem; margin-top: 5px;">
+            <span id="dashboardCardCount">0</span> cards total
+          </div>
+        </div>
+        <button class="btn btn-success" id="addCardBtn">+ Add Card</button>
+      </div>
+      <div class="dashboard-content">
+        <div class="card-list" id="cardList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Card Modal -->
+  <div class="modal" id="addCardModal">
+    <div class="modal-content">
+      <div class="modal-header">Add New Card</div>
+      <div class="form-group">
+        <label class="form-label">Question</label>
+        <textarea class="form-textarea" id="newCardQuestion" placeholder="Enter your question..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Answer</label>
+        <textarea class="form-textarea" id="newCardAnswer" placeholder="Enter the answer..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-modal-cancel" id="cancelAddCard">Cancel</button>
+        <button class="btn btn-success" id="saveNewCard">Save Card</button>
+      </div>
+    </div>
   </div>
 
   <script type="module">
@@ -206,7 +500,7 @@
     ];
 
     // Initialize storage using core function
-    const { cards, progress } = initializeStorage(initialCards);
+    let { cards, progress } = initializeStorage(initialCards);
 
     let currentCard = null;
     let isFlipped = false;
@@ -271,6 +565,245 @@
     });
 
     showNextCard();
+
+    // Dashboard functionality
+    const studyView = document.getElementById('studyView');
+    const dashboardView = document.getElementById('dashboardView');
+    const cardList = document.getElementById('cardList');
+    const addCardBtn = document.getElementById('addCardBtn');
+    const addCardModal = document.getElementById('addCardModal');
+    const cancelAddCard = document.getElementById('cancelAddCard');
+    const saveNewCard = document.getElementById('saveNewCard');
+    const newCardQuestion = document.getElementById('newCardQuestion');
+    const newCardAnswer = document.getElementById('newCardAnswer');
+
+    // View switching
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const viewName = tab.dataset.view;
+
+        // Update active tab
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Update active view
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        if (viewName === 'study') {
+          studyView.classList.add('active');
+        } else if (viewName === 'dashboard') {
+          dashboardView.classList.add('active');
+          renderCardList();
+        }
+      });
+    });
+
+    // Format date for display
+    function formatDate(timestamp) {
+      const date = new Date(timestamp);
+      const now = Date.now();
+      const diffMs = timestamp - now;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffMs < 0) {
+        return 'Due now';
+      } else if (diffDays === 0) {
+        return 'Due today';
+      } else if (diffDays === 1) {
+        return 'Due tomorrow';
+      } else if (diffDays < 7) {
+        return `Due in ${diffDays} days`;
+      } else {
+        return date.toLocaleDateString();
+      }
+    }
+
+    // Render card list
+    function renderCardList() {
+      cardList.innerHTML = '';
+
+      // Update card count
+      const dashboardCardCount = document.getElementById('dashboardCardCount');
+      if (dashboardCardCount) {
+        dashboardCardCount.textContent = cards.length;
+      }
+
+      if (cards.length === 0) {
+        cardList.innerHTML = '<div style="text-align: center; color: white; padding: 40px;">No cards yet. Click "+ Add Card" to create your first card!</div>';
+        return;
+      }
+
+      cards.forEach(card => {
+        const cardProgress = progress[card.id] || {
+          interval: 0,
+          repetitions: 0,
+          easeFactor: 2.5,
+          nextReview: Date.now()
+        };
+
+        const cardItem = document.createElement('div');
+        cardItem.className = 'card-item';
+        cardItem.innerHTML = `
+          <div class="card-item-content">
+            <div class="card-item-question">${escapeHtml(card.question)}</div>
+            <div class="card-item-answer">${escapeHtml(card.answer)}</div>
+          </div>
+          <div class="card-item-stats">
+            <div class="stat-item">
+              <div class="stat-label">Interval</div>
+              <div class="stat-value">${cardProgress.interval} days</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Repetitions</div>
+              <div class="stat-value">${cardProgress.repetitions}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Ease Factor</div>
+              <div class="stat-value">${cardProgress.easeFactor.toFixed(2)}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Next Review</div>
+              <div class="stat-value">${formatDate(cardProgress.nextReview)}</div>
+            </div>
+          </div>
+          <div class="card-item-actions">
+            <button class="btn-small btn-warning reset-btn" data-card-id="${card.id}">Reset Progress</button>
+            <button class="btn-small btn-danger delete-btn" data-card-id="${card.id}">Delete</button>
+          </div>
+        `;
+
+        cardList.appendChild(cardItem);
+      });
+
+      // Add event listeners for delete buttons
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cardId = btn.dataset.cardId;
+          deleteCard(cardId);
+        });
+      });
+
+      // Add event listeners for reset buttons
+      document.querySelectorAll('.reset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cardId = btn.dataset.cardId;
+          resetCardProgress(cardId);
+        });
+      });
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Add card functionality
+    addCardBtn.addEventListener('click', () => {
+      addCardModal.classList.add('active');
+      newCardQuestion.value = '';
+      newCardAnswer.value = '';
+      newCardQuestion.focus();
+    });
+
+    cancelAddCard.addEventListener('click', () => {
+      addCardModal.classList.remove('active');
+    });
+
+    addCardModal.addEventListener('click', (e) => {
+      if (e.target === addCardModal) {
+        addCardModal.classList.remove('active');
+      }
+    });
+
+    saveNewCard.addEventListener('click', () => {
+      const question = newCardQuestion.value.trim();
+      const answer = newCardAnswer.value.trim();
+
+      if (!question || !answer) {
+        alert('Please enter both question and answer');
+        return;
+      }
+
+      // Generate new card ID
+      const newId = String(Date.now());
+
+      // Create new card
+      const newCard = {
+        id: newId,
+        question: question,
+        answer: answer
+      };
+
+      // Add to cards array
+      cards.push(newCard);
+      localStorage.setItem('flashcards', JSON.stringify(cards));
+
+      // Initialize progress
+      progress[newId] = {
+        interval: 0,
+        repetitions: 0,
+        easeFactor: 2.5,
+        nextReview: Date.now()
+      };
+      localStorage.setItem('progress', JSON.stringify(progress));
+
+      // Close modal and refresh list
+      addCardModal.classList.remove('active');
+      renderCardList();
+
+      // Update study view
+      totalEl.textContent = cards.length;
+
+      // Refresh study view to include new card in due cards
+      showNextCard();
+    });
+
+    // Delete card
+    function deleteCard(cardId) {
+      const card = cards.find(c => c.id === cardId);
+      if (!card) return;
+
+      if (confirm(`Delete card: "${card.question}"?`)) {
+        // Remove from cards array
+        cards = cards.filter(c => c.id !== cardId);
+        localStorage.setItem('flashcards', JSON.stringify(cards));
+
+        // Remove progress
+        delete progress[cardId];
+        localStorage.setItem('progress', JSON.stringify(progress));
+
+        // Refresh list
+        renderCardList();
+
+        // Update study view
+        totalEl.textContent = cards.length;
+        showNextCard();
+      }
+    }
+
+    // Reset card progress
+    function resetCardProgress(cardId) {
+      const card = cards.find(c => c.id === cardId);
+      if (!card) return;
+
+      if (confirm(`Reset progress for: "${card.question}"?`)) {
+        // Reset to initial state
+        progress[cardId] = {
+          interval: 0,
+          repetitions: 0,
+          easeFactor: 2.5,
+          nextReview: Date.now()
+        };
+        localStorage.setItem('progress', JSON.stringify(progress));
+
+        // Refresh list
+        renderCardList();
+
+        // Update study view if needed
+        showNextCard();
+      }
+    }
 
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

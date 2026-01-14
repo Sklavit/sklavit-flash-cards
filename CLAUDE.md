@@ -19,11 +19,13 @@ The `/planning` directory contains structured documentation for development and 
 ```
 /planning
 ├── in-progress.md                   # Current sprint tasks and priorities
+├── lessons_learned.md               # Common pitfalls and solutions from development
 ├── user-guide.md                    # How to run the app (iOS, macOS, etc.)
 ├── testing-guide.md                 # How to run tests and write new ones
 ├── done/                            # Completed features (implementation docs)
 │   ├── spaced_repetition.md         # ✅ Implemented (2026-01-11)
-│   └── automated_testing.md         # ✅ Implemented (2026-01-11)
+│   ├── automated_testing.md         # ✅ Implemented (2026-01-11)
+│   └── card_management_dashboard.md # ✅ Implemented (2026-01-12)
 ├── requests/                        # User stories (what to build)
 ├── specs/                           # Implementation specifications
 ├── todo/                            # Technical tasks (how to build)
@@ -40,6 +42,20 @@ The `/planning` directory contains structured documentation for development and 
 4. Follow the technical tasks in `/planning/todo/{feature}.md` (detailed implementation steps)
 5. Read design decisions in `/planning/design_decisions/` to understand architecture
 
+### CRITICAL: Documentation Discipline
+
+**You MUST follow these rules for every code change:**
+
+- **Update planning docs IMMEDIATELY after EVERY code change**
+- Treat documentation updates as part of the code change, not a separate task
+- Document bug fixes, not just initial features
+- Keep line number references current
+- Commit code and docs together in same session
+
+This is MANDATORY. Outdated docs waste time and cause confusion. See `/planning/lessons_learned.md` for real examples of what happens when this is not followed.
+
+### Development Workflows
+
 **When Adding Features:**
 1. Read the user story in `/planning/requests/{feature}.md` - WHAT users want
 2. Check `/planning/specs/{feature}.md` - HOW the system should be structured
@@ -47,6 +63,22 @@ The `/planning` directory contains structured documentation for development and 
 4. Implement in code matching the spec exactly
 5. Update `/planning/specs/{feature}.md` with actual implementation if it differs
 6. When complete, create documentation in `/planning/done/{feature}.md`
+
+**CRITICAL: After Every Code Change:**
+1. **ALWAYS update `/planning/` documentation immediately after code changes**
+2. Update `/planning/in-progress.md` - mark completed tasks, update status
+3. Update `/planning/specs/{feature}.md` - reflect actual implementation
+4. Update or create `/planning/done/{feature}.md` - document what was built
+5. Update `CLAUDE.md` - add feature to "Implemented Features" list if major
+6. **Document ALL bug fixes and improvements**, not just initial implementations
+7. Keep line number references current when code changes
+8. This is MANDATORY, not optional - outdated docs cause confusion
+
+**When Fixing Bugs:**
+1. Fix the bug in code first
+2. Immediately document the fix in `/planning/done/{feature}.md`
+3. Update affected planning docs with new line numbers or behavior
+4. Commit code and documentation updates together
 
 **When Making Architectural Decisions:**
 1. Review `/planning/design_decisions/` for previous rationales
@@ -86,7 +118,7 @@ See `/planning/design_decisions/` for detailed architectural choices.
 └── planning/               # Development planning and specs
 ```
 
-### Implemented Features (MVP Phase 1 - Partial)
+### Implemented Features (MVP Phase 1 - Complete) ✅
 
 ✅ **Core Features**:
 - Flashcard display with flip animation
@@ -97,13 +129,21 @@ See `/planning/design_decisions/` for detailed architectural choices.
 - 10 test cards included
 - Automated test suite (40 tests, 9 test suites, 100% passing)
 
-❌ **Still Needed for Phase 1**:
-- Card creation UI
-- Card editing UI
-- Basic settings panel
+✅ **Card Management Dashboard** (2026-01-12):
+- Two-tab navigation (Study / Dashboard)
+- View all cards with complete statistics
+- Add new cards via modal form
+- Delete cards with confirmation
+- Reset card progress (force update state)
+- Fixed header with scrollable card list
+- Real-time statistics display (interval, repetitions, ease factor, next review)
+
+**Optional for Phase 1** (Future):
+- Basic settings panel (not critical for MVP)
+- Card editing (update question/answer)
 
 See `/planning/in-progress.md` for current priorities.
-See `/planning/done/spaced_repetition.md` for full implementation details.
+See `/planning/done/` for detailed implementation documentation.
 
 ### Data Model (Current Implementation)
 
@@ -255,3 +295,18 @@ This file should be:
 - Updated only when structure changes
 
 For detailed specifications, user stories, implementation plans, and design decisions, always refer to the `/planning/` directory.
+
+## Best Practices & Development Principles
+
+**Before starting any work:**
+- Review `/planning/lessons_learned.md` for common pitfalls to avoid
+- Check feature completion checklist in lessons learned document
+- Follow the development workflow outlined above
+
+**Key principles:**
+- Document immediately after every code change (not later)
+- Test immediately (don't wait to discover bugs)
+- Fix before moving on (don't leave known bugs)
+- Keep docs current with code reality
+
+See `/planning/lessons_learned.md` for detailed examples, specific bug patterns, and solutions from real development experience.
