@@ -19,6 +19,7 @@ The `/planning` directory contains structured documentation for development and 
 ```
 /planning
 ├── in-progress.md                   # Current sprint tasks and priorities
+├── lessons_learned.md               # Common pitfalls and solutions from development
 ├── user-guide.md                    # How to run the app (iOS, macOS, etc.)
 ├── testing-guide.md                 # How to run tests and write new ones
 ├── done/                            # Completed features (implementation docs)
@@ -281,93 +282,17 @@ This file should be:
 
 For detailed specifications, user stories, implementation plans, and design decisions, always refer to the `/planning/` directory.
 
-## Lessons Learned & Best Practices
+## Best Practices & Development Principles
 
-### Documentation Discipline
+**Before starting any work:**
+- Review `/planning/lessons_learned.md` for common pitfalls to avoid
+- Check feature completion checklist in lessons learned document
+- Follow the development workflow outlined above
 
-**The Problem:**
-During card management dashboard implementation (2026-01-12), initial documentation was created but 4 follow-up commits with bug fixes weren't documented until explicitly requested. This created a gap between code reality and documentation.
+**Key principles:**
+- Document immediately after every code change (not later)
+- Test immediately (don't wait to discover bugs)
+- Fix before moving on (don't leave known bugs)
+- Keep docs current with code reality
 
-**The Solution:**
-- **Update planning docs IMMEDIATELY after EVERY code change**
-- Treat documentation updates as part of the code change, not a separate task
-- Document bug fixes, not just initial features
-- Keep line number references current
-- Commit code and docs together in same session
-
-**Why This Matters:**
-- Outdated docs waste time and cause confusion
-- Bug fixes are as important to document as features
-- Future work relies on accurate current state
-- Planning docs guide all development decisions
-
-### Testing Discipline
-
-**Current State:**
-- 40 tests covering core logic (SM-2, storage, cards)
-- Tests in `tests/` directory using Node.js test runner
-- Run with: `npm test`
-
-**What's Tested:**
-- SM-2 algorithm correctness
-- localStorage persistence
-- Card filtering and due card selection
-
-**What's NOT Tested (Future):**
-- UI interactions (would need Playwright/Cypress)
-- Dashboard functionality
-- Modal forms
-- Button click handlers
-
-### Common Pitfalls to Avoid
-
-**1. Variable Declaration Issues**
-- ❌ Don't use `const` for variables that need reassignment
-- ✅ Use `let` for variables modified by functions (like `cards`, `progress`)
-- Example: Card deletion failed because `cards` was `const`
-
-**2. UI Update Gaps**
-- ❌ Don't assume UI updates automatically
-- ✅ Explicitly refresh all affected views after state changes
-- Example: New cards didn't appear until `showNextCard()` was called
-
-**3. Flexbox Overflow**
-- ❌ Don't forget `min-height: 0` for scrollable flex children
-- ✅ Always test scrolling with many items
-- Example: Dashboard scroll required multiple CSS fixes
-
-**4. Modal Button Styling**
-- ❌ Don't reuse background-specific button classes in modals
-- ✅ Create modal-specific button styles
-- Example: Cancel button was white-on-white until fixed
-
-**5. Fixed Headers in Scroll Containers**
-- ❌ Don't put scrollable content in same container as header
-- ✅ Separate header (fixed) from content (scrollable) with wrapper divs
-- Example: Dashboard header needed restructuring to stay fixed
-
-### Feature Completion Checklist
-
-Before considering a feature "done":
-- [ ] Code implemented and working
-- [ ] Manual testing complete (all use cases)
-- [ ] Automated tests written (if applicable)
-- [ ] All bugs found during testing are fixed
-- [ ] `/planning/done/{feature}.md` created with full documentation
-- [ ] `/planning/specs/{feature}.md` updated with actual implementation
-- [ ] `/planning/in-progress.md` updated to mark feature complete
-- [ ] `CLAUDE.md` updated if major feature
-- [ ] All follow-up bug fix commits documented
-- [ ] Line number references are current
-- [ ] Code and docs committed together
-
-### Development Principles (Reinforced by Experience)
-
-1. **Test Immediately**: Don't wait to discover bugs - test each feature right away
-2. **Document Immediately**: Update planning docs with every commit
-3. **Fix Before Moving On**: Don't leave known bugs for later
-4. **Keep Docs Current**: Line numbers, behavior, status must match code
-5. **Complete Features Fully**: Including bug fixes, UI polish, and documentation
-6. **Learn from Issues**: Document common pitfalls to avoid repeating them
-
-These practices ensure that features are truly complete and documented before moving to the next task.
+See `/planning/lessons_learned.md` for detailed examples, specific bug patterns, and solutions from real development experience.
